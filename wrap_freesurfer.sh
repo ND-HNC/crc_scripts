@@ -3,8 +3,8 @@
 function Usage {
     cat <<USAGE
 
-    Run FreeSurfer for subjects found in rawdata T1w anat files and not
-    freesurfer output.
+    Identify all subjects in proj_dir needing FreeSurfer, schedule FreeSurfer
+    job as QSUB array.
 
     Wrapper of run_freesurfer.sh, logging files written to proj_dir/logs.
     Generate intermediates in work_dir, then send final output files
@@ -37,6 +37,9 @@ function Usage {
         -p <str> = Location of BIDS-organized project directory
         -w <str> = Location of working directory
 
+    Optional arguments:
+        -n <int> = Number of simultaneous array jobs (default=15).
+
     Example Usage:
         ./wrap_freesurfer.sh \\
             -e ses-1 \\
@@ -47,13 +50,17 @@ USAGE
 }
 
 # Default args
+num_simul=15
 code_dir="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 || exit ; pwd -P )"
 
 # Capture arguments
-while getopts ":e:p:w:h" OPT; do
+while getopts ":e:n:p:w:h" OPT; do
     case $OPT in
     e)
         sess=${OPTARG}
+        ;;
+    n)
+        num_simul=${OPTARG}
         ;;
     p)
         proj_dir=${OPTARG}
@@ -153,7 +160,7 @@ qsub \
     -V \
     -N "$job_name" \
     -t 1-${#subj_list[@]} \
-    -tc 15 \
+    -tc "$num_simul" \
     -o "${log_out}" \
     run_freesurfer.sh \
     -e "$sess" \
