@@ -226,7 +226,8 @@ if [ ! -f "${subj_work}/mri/aparc.a2009s+aseg.mgz" ]; then
 fi
 
 # Move and clean
-cp -r "$subj_work" "${proj_dir}/derivatives/freesurfer/${sess}"
+sess_deriv="$(dirname "$subj_deriv")"
+cp -r "$subj_work" "$sess_deriv"
 if [ ! -f "$chk_fs" ]; then
     echo "ERROR: FreeSurfer copy failed" >> "$log_err"
     exit 1
