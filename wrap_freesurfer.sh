@@ -12,7 +12,13 @@ function Usage {
 
     Required environment:
         - HOSTNAME = *crc.nd.edu, for computing on ND CRC.
+        - load_env.sh in same directory as this file:
+            crc_scripts
+            ├── load_env.sh
+            ├── run_freesurfer.sh
+            └── wrap_freesurfer.sh
 
+    In/Output structure:
     proj_dir
     ├── logs
     │   └── preproc_freesurfer
@@ -51,7 +57,6 @@ USAGE
 
 # Default args
 num_simul=15
-code_dir="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 || exit ; pwd -P )"
 
 # Capture arguments
 while getopts ":e:n:p:w:h" OPT; do
@@ -108,14 +113,23 @@ if [[ $HOSTNAME != *"crc.nd.edu" ]]; then
     exit 1
 fi
 
-if [ -z "$FS_LICENSE" ]; then
-    echo "ERROR: missing global FS_LICENSE" >&2
-    Usage
-    exit 1
-fi
+# if [ -z "$FS_LICENSE" ]; then
+#     echo "ERROR: missing global FS_LICENSE" >&2
+#     Usage
+#     exit 1
+# fi
 
-if ! command -v mri_convert >/dev/null 2>&1; then
-    echo "ERROR: missing FreeSurfer in environment" >&2
+# if ! command -v mri_convert >/dev/null 2>&1; then
+#     echo "ERROR: missing FreeSurfer in environment" >&2
+#     Usage
+#     exit 1
+# fi
+
+# Identify environment load script
+code_dir="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 || exit ; pwd -P )"
+env_script="$code_dir"/load_env.sh
+if [ ! -f "$env_script" ]; then
+    echo "ERROR: failed to detect environment script." >&2
     Usage
     exit 1
 fi
@@ -167,4 +181,5 @@ qsub \
     -l "$log_dir" \
     -p "$proj_dir" \
     -w "$work_dir" \
+    -x "$env_script" \
     "${subj_list[@]}"

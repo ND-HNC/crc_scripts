@@ -43,11 +43,21 @@ function Usage {
                     ..
                     └── touch
 
+    work_dir
+    └── freesurfer-8.2.0
+        └── ses-1
+            └── sub-A
+                ├── label
+                ├── mri
+                ..
+                └── touch
+
     Required arguments:
         -e <str> = BIDS session
         -l <str> = Location of logging directory
         -p <str> = Location of BIDS-organize project directory
         -w <str> = Location of working directory
+        -x <str> = Location of load_env.sh
         <subject array> = Positional args of BIDS subject IDs
 
     Example Usage:
@@ -61,13 +71,14 @@ function Usage {
             -l /path/to/logs \\
             -p /path/to/proj_dir \\
             -w /path/to/work_dir \\
+            -x /path/to/load_env.sh \\
             sub-A sub-B sub-C
 
 USAGE
 }
 
 # Capture arguments
-while getopts ":e:l:p:w:h" OPT; do
+while getopts ":e:l:p:w:x:h" OPT; do
     case $OPT in
     e)
         sess=${OPTARG}
@@ -85,6 +96,14 @@ while getopts ":e:l:p:w:h" OPT; do
         ;;
     w)
         work_dir=${OPTARG}
+        ;;
+    x)
+        env_script=${OPTARG}
+        if [ ! -f "$env_script" ]; then
+            echo -e "ERROR: $env_script not found y." >&2
+            Usage
+            exit 1
+        fi
         ;;
     h)
         Usage
@@ -104,7 +123,7 @@ while getopts ":e:l:p:w:h" OPT; do
 done
 
 # Capture subject list as array
-shift 8
+shift 10
 subj_list=( "$@" )
 
 # Provide help for no options
@@ -115,7 +134,7 @@ fi
 
 # Check for required named parameters
 case $1 in
-    -e|-l|-p|-s|-w)
+    -e|-l|-p|-s|-w|-x)
         ;;
     -*)
         echo "ERROR: missing required parameter" >&2
@@ -123,7 +142,7 @@ case $1 in
         exit 1
 esac
 
-# Verify environment
+# Verify CRC, array
 if [[ $HOSTNAME != *"crc.nd.edu" ]]; then
     echo "ERROR: please execute on Notre Dame compute cluster." >&2
     Usage
@@ -136,6 +155,11 @@ if [ -z "$SGE_TASK_ID" ]; then
     exit 1
 fi
 
+# Trigger project environment
+# shellcheck disable=SC1090
+. "$env_script"
+
+# Verify project env
 if [ -z "$FS_LICENSE" ]; then
     echo "ERROR: missing global FS_LICENSE" >&2
     Usage

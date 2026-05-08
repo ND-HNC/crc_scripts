@@ -7,6 +7,8 @@ export SUBJECTS_DIR=""
 FS_LICENSE=/users/$(whoami)/.ssh/FS_license.txt
 export FS_LICENSE
 
+export LD_LIBRARY_PATH=/software/l/lapack/3.12.1/gcc/lib64:$LD_LIBRARY_PATH
+
 # TemplateFlow
 TEMPLATEFLOW_HOME=/scratch365/$(whoami)/research_bin/templates/templateflow
 export TEMPLATEFLOW_HOME
