@@ -135,9 +135,9 @@ if [ ! -f "$env_script" ]; then
 fi
 
 # Check for BIDS
-bids_raw="${proj_dir}/rawdata"
+bids_raw="$proj_dir"/rawdata
 if [ ! -d "$bids_raw" ]; then
-    echo "ERROR: failed to detect BIDS rawdata." >&2
+    echo "ERROR: failed to detect BIDS rawdata. $bids_raw" >&2
     Usage
     exit 1
 fi
