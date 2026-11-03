@@ -17,7 +17,7 @@ function Usage {
     Required environment:
         - HOSTNAME = *crc.nd.edu, for computing on ND CRC.
         - SGE_TASK_ID = Set when submitted as array.
-        - Module = freesurfer/8.2.0
+        - Module = freesurfer/$VER_FREESURFER
         - Data structure - BIDS organization (see below).
 
     Notes:
@@ -100,7 +100,7 @@ while getopts ":e:l:p:w:x:h" OPT; do
     x)
         env_script=${OPTARG}
         if [ ! -f "$env_script" ]; then
-            echo -e "ERROR: $env_script not found y." >&2
+            echo -e "ERROR: $env_script not found." >&2
             Usage
             exit 1
         fi
@@ -184,7 +184,7 @@ log_err=${log_dir}/${subj}_${sess}.err
 
 # Find rawdata, make work & derivatives
 subj_raw=${proj_dir}/rawdata/${subj}/$sess
-subj_deriv=${proj_dir}/derivatives/freesurfer-8.2.0/${sess}/$subj
+subj_deriv=${proj_dir}/derivatives/freesurfer-${VER_FREESURFER}/${sess}/$subj
 subj_work=${work_dir}/freesurfer/${sess}/$subj
 orig_dir=${subj_work}/mri/orig
 

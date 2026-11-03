@@ -39,12 +39,12 @@ function Usage {
                     └── touch
 
     Required arguments:
-        -e <str> = BIDS session
-        -p <str> = Location of BIDS-organized project directory
-        -w <str> = Location of working directory
+        -e <str>    BIDS session
+        -p <str>    Location of BIDS-organized project directory
+        -w <str>    Location of working directory
 
     Optional arguments:
-        -n <int> = Number of simultaneous array jobs (default=15).
+        -n <int>    Number of simultaneous array jobs (default=15).
 
     Example Usage:
         ./wrap_freesurfer.sh \\
@@ -113,18 +113,6 @@ if [[ $HOSTNAME != *"crc.nd.edu" ]]; then
     exit 1
 fi
 
-# if [ -z "$FS_LICENSE" ]; then
-#     echo "ERROR: missing global FS_LICENSE" >&2
-#     Usage
-#     exit 1
-# fi
-
-# if ! command -v mri_convert >/dev/null 2>&1; then
-#     echo "ERROR: missing FreeSurfer in environment" >&2
-#     Usage
-#     exit 1
-# fi
-
 # Identify environment load script
 code_dir="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 || exit ; pwd -P )"
 env_script="$code_dir"/load_env.sh
@@ -133,6 +121,8 @@ if [ ! -f "$env_script" ]; then
     Usage
     exit 1
 fi
+# shellcheck disable=SC1090
+. "$env_script"
 
 # Check for BIDS
 bids_raw="$proj_dir"/rawdata
@@ -156,7 +146,7 @@ subj_list=()
 cd "${proj_dir}/rawdata" || exit 2
 for subj in sub-*; do
     fs_in=${proj_dir}/rawdata/${subj}/${sess}/anat/${subj}_${sess}_T1w.nii.gz
-    fs_out=${proj_dir}/derivatives/freesurfer-8.2.0/${sess}/${subj}/mri/aparc.a2009s+aseg.mgz
+    fs_out=${proj_dir}/derivatives/freesurfer-"$VER_FREESURFER"/${sess}/${subj}/mri/aparc.a2009s+aseg.mgz
     if [ -f "$fs_in" ] && [ ! -f "$fs_out" ]; then
         subj_list+=("$subj")
     fi

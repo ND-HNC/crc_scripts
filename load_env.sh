@@ -1,8 +1,9 @@
 #!/bin/bash
 
 # FreeSurfer
-echo "Loading FreeSurfer v8.2.0"
-module load freesurfer/8.2.0
+export VER_FREESURFER=8.2.0
+echo "Loading FreeSurfer v$VER_FREESURFER"
+module load freesurfer/"$VER_FREESURFER"
 export SUBJECTS_DIR=""
 FS_LICENSE=/users/$(whoami)/.ssh/FS_license.txt
 if [ -f "$FS_LICENSE" ]; then
@@ -20,9 +21,11 @@ export TEMPLATEFLOW_HOME
 export TEMPLATE_DIR="$TEMPLATEFLOW_HOME/tpl-MNI152NLin2009cSym"
 
 # fMRIPrep
-echo "Loading fMRIPrep v25.2.7"
-export SING_FMRIPREP=/leadfs/hnc/research_bin/sing_images/fmriprep-25.2.7.simg
+export VER_FMRIPREP=25.2.7
+echo "Loading fMRIPrep v$VER_FMRIPREP"
+export SING_FMRIPREP=/leadfs/hnc/research_bin/sing_images/fmriprep-"$VER_FMRIPREP".simg
 
 # FSL
-echo "Loading FSL v6.0"
-module load fsl/6.0
+export VER_FSL=6.0
+echo "Loading FSL v$VER_FSL"
+module load fsl/"$VER_FSL"
