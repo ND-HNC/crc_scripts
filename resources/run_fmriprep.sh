@@ -19,7 +19,6 @@ function Usage {
         - HOSTNAME = *crc.nd.edu, for computing on ND CRC.
         - SGE_TASK_ID = Set when submitted as array.
         - apptainer executable in env.
-        - Data structure - BIDS organization (see below).
 
     Required named arguments:
         -e <str>    BIDS session
