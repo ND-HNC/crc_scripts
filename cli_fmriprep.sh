@@ -96,6 +96,8 @@ if [ ! -f "$env_script" ]; then
     echo "ERROR: failed to detect environment script." >&2
     exit 1
 fi
+# shellcheck disable=SC1090
+. "$env_script"
 
 # Check for BIDS
 bids_raw="$proj_dir"/rawdata

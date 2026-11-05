@@ -12,32 +12,6 @@ function Usage {
 
     Required environment:
         - HOSTNAME = *crc.nd.edu, for computing on ND CRC.
-        - load_env.sh in same directory as this file:
-            crc_scripts
-            ├── load_env.sh
-            ├── cli_freesurfer.sh
-            └── resources/
-                └── run_freesurfer.sh
-
-    In/Output structure:
-    proj_dir
-    ├── logs
-    │   └── preproc_freesurfer
-    │       └── wrap_freesurfer.log
-    ├── rawdata
-    │   └── sub-A
-    │       └── ses-1
-    │           └── anat
-    │               ├── sub-A_ses-1_T1w.nii.gz
-    │               └── sub-A_ses-1_T1w.json
-    └── derivatives
-        └── freesurfer-8.2.0
-            └── ses-1
-                └── sub-A
-                    ├── label
-                    ├── mri
-                    ..
-                    └── touch
 
     Required arguments:
         -e <str>    BIDS session
@@ -79,13 +53,13 @@ while getopts ":e:n:p:w:h" OPT; do
         exit 0
         ;;
     :)
-        echo -e "ERROR: option '$OPTARG' missing argument." >&2
         Usage
+        echo -e "ERROR: option '$OPTARG' missing argument." >&2
         exit 1
         ;;
     \?)
-        echo -e "ERROR: invalid option '$OPTARG'." >&2
         Usage
+        echo -e "ERROR: invalid option '$OPTARG'." >&2
         exit 1
         ;;
     esac
@@ -102,15 +76,15 @@ case $1 in
     -e|-f|-p|-w)
         ;;
     -*)
-        echo "ERROR: missing required parameter" >&2
         Usage
+        echo "ERROR: missing required parameter" >&2
         exit 1
 esac
 
 # Verify cluster environment
 if [[ $HOSTNAME != *"crc.nd.edu" ]]; then
-    echo "ERROR: please execute on Notre Dame compute cluster." >&2
     Usage
+    echo "ERROR: please execute on Notre Dame compute cluster." >&2
     exit 1
 fi
 
@@ -118,8 +92,8 @@ fi
 code_dir="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 || exit ; pwd -P )"
 env_script="$code_dir"/load_env.sh
 if [ ! -f "$env_script" ]; then
-    echo "ERROR: failed to detect environment script." >&2
     Usage
+    echo "ERROR: failed to detect environment script." >&2
     exit 1
 fi
 # shellcheck disable=SC1090
@@ -128,8 +102,8 @@ fi
 # Check for BIDS
 bids_raw="$proj_dir"/rawdata
 if [ ! -d "$bids_raw" ]; then
-    echo "ERROR: failed to detect BIDS rawdata. $bids_raw" >&2
     Usage
+    echo "ERROR: failed to detect BIDS rawdata. $bids_raw" >&2
     exit 1
 fi
 
@@ -155,12 +129,12 @@ done
 cd "$code_dir" || exit 2
 
 if [ ${#subj_list[@]} == 0 ]; then
-    echo "No subjects detected needing FreeSurfer output, exiting ..."  >> "$log_out"
+    echo "No subjects detected needing FreeSurfer output, exiting."
     exit 0
 fi
 
 # Submit array of jobs
-echo "Found ${#subj_list[@]} subjects: ${subj_list[*]}" >> "$log_out"
+echo "Found ${#subj_list[@]} subjects: ${subj_list[*]}"
 qsub \
     -V \
     -N "$job_name" \

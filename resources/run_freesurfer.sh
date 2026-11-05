@@ -17,40 +17,9 @@ function Usage {
     Required environment:
         - HOSTNAME = *crc.nd.edu, for computing on ND CRC.
         - SGE_TASK_ID = Set when submitted as array.
-        - Module = freesurfer/$VER_FREESURFER
-        - Data structure - BIDS organization (see below).
 
     Notes:
         - Inverted subject, session in derivatives for FreeSurfer compatibility.
-
-    proj_dir
-    ├── logs
-    │   └── preproc_freesurfer
-    │       ├── sub-A_ses-1.out
-    │       └── sub-A_ses-1.err
-    ├── rawdata
-    │   └── sub-A
-    │       └── ses-1
-    │           └── anat
-    │               ├── sub-A_ses-1_T1w.nii.gz
-    │               └── sub-A_ses-1_T1w.json
-    └── derivatives
-        └── freesurfer-8.2.0
-            └── ses-1
-                └── sub-A
-                    ├── label
-                    ├── mri
-                    ..
-                    └── touch
-
-    work_dir
-    └── freesurfer-8.2.0
-        └── ses-1
-            └── sub-A
-                ├── label
-                ├── mri
-                ..
-                └── touch
 
     Required arguments:
         -e <str>    BIDS session
@@ -88,8 +57,8 @@ while getopts ":e:l:p:w:x:h" OPT; do
     l)
         log_dir=${OPTARG}
         if [ ! -d "$log_dir" ]; then
-            echo -e "ERROR: $log_dir not found or is not a directory." >&2
             Usage
+            echo -e "ERROR: $log_dir not found or is not a directory." >&2
             exit 1
         fi
         ;;
@@ -102,8 +71,8 @@ while getopts ":e:l:p:w:x:h" OPT; do
     x)
         env_script=${OPTARG}
         if [ ! -f "$env_script" ]; then
-            echo -e "ERROR: $env_script not found." >&2
             Usage
+            echo -e "ERROR: $env_script not found." >&2
             exit 1
         fi
         ;;
@@ -112,13 +81,13 @@ while getopts ":e:l:p:w:x:h" OPT; do
         exit 0
         ;;
     :)
-        echo -e "ERROR: option '$OPTARG' missing argument." >&2
         Usage
+        echo -e "ERROR: option '$OPTARG' missing argument." >&2
         exit 1
         ;;
     \?)
-        echo -e "ERROR: invalid option '$OPTARG'." >&2
         Usage
+        echo -e "ERROR: invalid option '$OPTARG'." >&2
         exit 1
         ;;
     esac
@@ -139,21 +108,21 @@ case $1 in
     -e|-l|-p|-s|-w|-x)
         ;;
     -*)
-        echo "ERROR: missing required parameter" >&2
         Usage
+        echo "ERROR: missing required parameter" >&2
         exit 1
 esac
 
 # Verify CRC, array
 if [[ $HOSTNAME != *"crc.nd.edu" ]]; then
-    echo "ERROR: please execute on Notre Dame compute cluster." >&2
     Usage
+    echo "ERROR: please execute on Notre Dame compute cluster." >&2
     exit 1
 fi
 
 if [ -z "$SGE_TASK_ID" ]; then
-    echo "ERROR: please submit $0 as qsub array" >&2
     Usage
+    echo "ERROR: please submit $0 as qsub array" >&2
     exit 1
 fi
 
@@ -163,14 +132,14 @@ fi
 
 # Verify project env
 if [ -z "$FS_LICENSE" ]; then
-    echo "ERROR: missing global FS_LICENSE" >&2
     Usage
+    echo "ERROR: missing global FS_LICENSE" >&2
     exit 1
 fi
 
 if ! command -v mri_convert >/dev/null 2>&1; then
-    echo "ERROR: missing FreeSurfer in environment" >&2
     Usage
+    echo "ERROR: missing FreeSurfer in environment" >&2
     exit 1
 fi
 
