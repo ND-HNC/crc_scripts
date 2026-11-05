@@ -178,6 +178,49 @@ if [ ! -f "$subj_anat" ]; then
     exit 1
 fi
 
+# Extract series description as string
+get_series_desc() {
+  local file="$1"
+  local series_desc
+  series_desc=$(
+    dcmdump +P "0008,103e" "$file" 2>/dev/null | \
+    sed -n 's/.*\[\(.*\)\].*/\1/p' | \
+    head -n 1
+  )
+
+  if [[ -z "$series_desc" ]]; then
+    echo "Unknown_Series"
+  else
+    echo "$series_desc"
+  fi
+}
+export -f get_series_desc
+
+# Extract image type echo ORIGINAL or DERIVED
+get_orig_deriv() {
+  local file="$1"
+  local orig_deriv
+  orig_deriv=$(
+    dcmdump +P "0008,008" "$file" 2>/dev/null | \
+    sed -n 's/.*\[\(.*\)\].*/\1/p' | \
+    head -n 1 | \
+    sed 's/\\/_/g'
+  )
+
+  if [[ -z "$orig_deriv" ]]; then
+    echo "Unknown_Source"
+  else
+    echo "${orig_deriv%%_*}"
+  fi
+}
+export -f get_orig_deriv
+
+
+
+
+# Get original anat func dwi fmap
+# TODO: support derived anat dwi
+
 # # Generate skeleton
 # apptainer run --cleanenv \
 #     --bind /leadfs/hnc/nmuncy/crc_test:/leadfs/hnc/nmuncy/crc_test \
