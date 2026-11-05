@@ -15,8 +15,9 @@ function Usage {
         - load_env.sh in same directory as this file:
             crc_scripts
             ├── load_env.sh
-            ├── run_freesurfer.sh
-            └── wrap_freesurfer.sh
+            ├── cli_freesurfer.sh
+            └── resources/
+                └── run_freesurfer.sh
 
     In/Output structure:
     proj_dir
@@ -47,7 +48,7 @@ function Usage {
         -n <int>    Number of simultaneous array jobs (default=15).
 
     Example Usage:
-        ./wrap_freesurfer.sh \\
+        ./cli_freesurfer.sh \\
             -e ses-1 \\
             -p /path/to/proj_dir \\
             -w /path/to/work_dir
@@ -166,7 +167,7 @@ qsub \
     -t 1-${#subj_list[@]} \
     -tc "$num_simul" \
     -o "${log_out}" \
-    run_freesurfer.sh \
+    resources/run_freesurfer.sh \
     -e "$sess" \
     -l "$log_dir" \
     -p "$proj_dir" \

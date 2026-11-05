@@ -267,8 +267,26 @@ subj_work=${work_dir}/fmriprep-"$VER_FMRIPREP"/$subj
 [ -d "$subj_deriv" ] || mkdir -p "$subj_deriv"
 [ -d "$subj_work" ] || mkdir -p "$subj_work"
 
-# Verify no output
+# Check for untransferred work, organize
+chk_file=${subj}/${sess}/anat/${subj}_${sess}_desc-preproc_T1w.nii.gz
+chk_work_html=${work_dir}/${subj}.html
+chk_work_anat=${work_dir}/$chk_file
 
+if [ -f "$chk_work_html" ] && [ -f "$chk_work_anat" ]; then
+    mv ${work_dir}/${subj}/$sess "$subj_deriv"
+    mv ${work_dir}/${subj}/figures "$subj_deriv"
+    mv ${work_dir}/${subj}.html ${proj_dir}/derivatives/fmriprep-"$VER_FMRIPREP"/${subj}_${sess}.html
+fi
+
+# Check for existing output
+chk_deriv_html=${proj_dir}/derivatives/fmriprep-"$VER_FMRIPREP"/${subj}_${sess}.html
+chk_deriv_anat=${proj_dir}/derivatives/fmriprep-"$VER_FMRIPREP"/$chk_file
+
+if [ -f "$chk_deriv_html" ] && [ -f "$chk_deriv_anat" ]; then
+    [ -d "$subj_work" ] && rm -r "$subj_work"
+    echo "fMRIPrep output exists for $subj, $sess."
+    exit 0
+fi
 
 # Find input
 subj_anat=${subj_raw}/anat/${subj}_${sess}_T1w.nii.gz
@@ -284,12 +302,12 @@ if [ "$cnt_func" -eq 0 ]; then
     exit 1
 fi
 
-# Find FreeSurfer output
+# Check for FreeSurfer output
 has_fs=""
 fs_deriv=${proj_dir}/derivatives/freesurfer-${VER_FREESURFER}/$sess
 [ -f "$fs_deriv"/"$subj"/mri/aparc.a2009s+aseg.mgz ] && has_fs=1
 
-# Apptainer opts
+# Apptainer options
 bind_opts=(
     --bind "$proj_dir":"$proj_dir"
     --bind "$work_dir":"$work_dir"
@@ -298,7 +316,6 @@ bind_opts=(
 )
 
 # fMRIPrep options
-
 # --ignore fieldmaps
 # --use-aroma
 fmriprep_opts=(
@@ -310,10 +327,11 @@ fmriprep_opts=(
     --fd-spike-threshold "$fd_thresh"
     --skip-bids-validation
     --bids-database-dir "$subj_work"/tmp_work/"$subj"/bids_layout
-    --nthreads 10
+    --nprocs 10
     --omp-nthreads 8
     --stop-on-first-crash
     --debug all
+    --notrack
 )
 
 # Manage options
@@ -341,4 +359,18 @@ apptainer run --cleanenv \
     "${fmriprep_opts[@]}"
 
 
-# Move and clean
+# Send work to derivatives
+if [ -f "$chk_work_html" ] && [ -f "$chk_work_anat" ]; then
+    mv ${work_dir}/${subj}/$sess "$subj_deriv"
+    mv ${work_dir}/${subj}/figures "$subj_deriv"
+    mv ${work_dir}/${subj}.html ${proj_dir}/derivatives/fmriprep-"$VER_FMRIPREP"/${subj}_${sess}.html
+fi
+
+# Verify output
+if [ -f "$chk_deriv_html" ] && [ -f "$chk_deriv_anat" ]; then
+    [ -d "$subj_work" ] && rm -r "$subj_work"
+    echo "Success! fMRIPrep output exists for $subj, $sess."
+else
+    echo "ERROR: expected $chk_deriv_anat"
+    exit 1
+fi

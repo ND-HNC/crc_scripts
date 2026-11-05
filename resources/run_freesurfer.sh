@@ -53,12 +53,14 @@ function Usage {
                 └── touch
 
     Required arguments:
-        -e <str> = BIDS session
-        -l <str> = Location of logging directory
-        -p <str> = Location of BIDS-organize project directory
-        -w <str> = Location of working directory
-        -x <str> = Location of load_env.sh
-        <subject array> = Positional args of BIDS subject IDs
+        -e <str>    BIDS session
+        -l <str>    Location of logging directory
+        -p <str>    Location of BIDS-organize project directory
+        -w <str>    Location of working directory
+        -x <str>    Location of load_env.sh
+
+    Positional arguments:
+        [<str>...]  BIDS subject IDs
 
     Example Usage:
         qsub \\
