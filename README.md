@@ -1,10 +1,10 @@
 # crc_scripts
 
-1. DICOM to BIDS
+A common MRI workflow involves pre-processing anatomic and functional MRI data with standardized packages. These scripts are written for use on the Notre Dame compute cluster and provide a basic pipeline for use or reference.
+
 1. [FreeSurfer](#freesurfer)
 1. [fMRIPrep](#fmriprep)
-
-## DICOM to BIDS
+1. AFNI- additional pre-processing
 
 ## FreeSurfer
 
