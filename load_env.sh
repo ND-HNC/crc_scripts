@@ -5,11 +5,6 @@ res_bin=/leadfs/hnc/research_bin
 tpl_bin=${res_bin}/templateflow
 sim_bin="$res_bin"/sing_images
 
-# Heudiconv
-export VER_HEUDICONV=1.5.1
-echo "Loading HeuDiconv v$VER_HEUDICONV"
-export SING_HEUDICONV="$sim_bin"/heudiconv-"$VER_HEUDICONV".simg
-
 # FreeSurfer
 export VER_FREESURFER=8.2.0
 echo "Loading FreeSurfer v$VER_FREESURFER"
@@ -42,8 +37,10 @@ module load fsl/"$VER_FSL"
 
 # PATH
 echo "Orienting to research binaries"
+
 PATH="$PATH":\
 "$res_bin":"$res_bin"/software:\
-"$res_bin"/software/dcmtk-3.7.1-linux-x86_64/bin
+"$res_bin"/software/dcmtk-3.7.1-linux-x86_64/bin:\
+"$res_bin"/software/dcm2niix-v1.0.20261029:
 
 export PATH

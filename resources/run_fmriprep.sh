@@ -67,7 +67,7 @@ fd_thresh=0.5
 out_res=2.0
 tpl_name=MNI152NLin6Asym
 num_dummy=0
-task=task-rest
+task="task-rest"
 
 # Catch positionals
 subj_list=()
@@ -78,11 +78,6 @@ while [[ $# -gt 0 ]]; do
 
         # Required args
         -e)
-            # if [[ -z "${2:-}" ]]; then
-            #     Usage
-            #     echo "ERROR: $1 requires a non-empty argument." >&2
-            #     exit 1
-            # fi
             sess="$2"
             ((cnt_reqs++))
             shift 2
@@ -151,24 +146,8 @@ while [[ $# -gt 0 ]]; do
 
         # Positional
         *)
-            subj_list+=($1)
+            subj_list+=("$1")
             shift 1
-            ;;
-
-        # Control
-        --)
-            shift
-            break
-            ;;
-        :)
-            Usage
-            echo -e "ERROR: option '$OPTARG' missing argument." >&2
-            exit 1
-            ;;
-        \?)
-            Usage
-            echo -e "ERROR: invalid option '$OPTARG'." >&2
-            exit 1
             ;;
     esac
 done
